@@ -1,17 +1,22 @@
 <script lang="ts">
-import { defineComponent, reactive } from "vue";
+import { messengerSocketController } from '../controllers/messenger-socket'
+
+import { defineComponent, reactive, ref } from "vue";
 
 export default defineComponent({
   name: "TheMessenger",
   setup() {
     const messages = reactive(['1', '2']);
+    const inputModel = ref('');
 
     const handleSubmit = () => {
       console.log("submit");
+      messengerSocketController.sendMessage(inputModel.value)
     };
 
     return {
       messages,
+      inputModel,
       handleSubmit,
     };
   },
@@ -22,13 +27,16 @@ export default defineComponent({
   <div class="messenger">
     <div class="messages">
         <ul>
-            <li v-for="message in messages">
+            <li 
+                v-for="(message, index) in messages" 
+                :key="index"
+            >
                 {{ message }}
             </li>
         </ul>
     </div>
     <form @submit.prevent="handleSubmit" action="" class="messenger-form">
-      <input type="text" />
+      <input type="text" v-model="inputModel" />
       <button>Send</button>
     </form>
   </div>
@@ -57,9 +65,20 @@ export default defineComponent({
     button {
       outline: none;
       border: 0;
-      background-color: #000;
-      color: blue;
+      background-color: #ffee00;
+      color: #000;
+      cursor: pointer;
     }
+  }
+}
+
+.messages {
+  ul {
+    list-style: none;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
   }
 }
 </style>
